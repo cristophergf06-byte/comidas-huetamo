@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Buscador</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="main-container">
+
+<h2>¿Dónde comer?</h2>
+
+<input type="text" id="inputBusqueda" placeholder="Buscar negocio...">
+<button onclick="buscarLocal()">🔍 Buscar</button>
+
+<div class="filter-btns">
+<button onclick="verCategoria('mañana')">Mañana</button>
+<button onclick="verCategoria('tarde')">Tarde</button>
+<button onclick="verCategoria('noche')">Noche</button>
+<button onclick="verCategoria('todos')">Todo el día</button>
+</div>
+
+</div>
+
+<button class="btn-float" onclick="verificarAcceso()">＋</button>
+
+<script src="script.js"></script>
+</body>
+</html>

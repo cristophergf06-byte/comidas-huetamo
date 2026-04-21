@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Registro</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body class="bg-pink">
+
+<div class="main-container">
+
+<div class="registro-container">
+
+<h2>Registrar negocio</h2>
+
+<form id="formRegistro">
+
+<input type="text" id="regNegocio" placeholder="Nombre" required>
+<textarea id="regVenta" placeholder="Descripción"></textarea>
+
+<select id="regTiempo">
+<option value="mañana">Mañana</option>
+<option value="tarde">Tarde</option>
+<option value="noche">Noche</option>
+<option value="todos">Todo el día</option>
+</select>
+
+<input type="text" id="regTelefono" placeholder="Teléfono">
+<input type="text" id="regUbicacion" placeholder="Ubicación">
+
+<div id="map"></div>
+<p id="coords">Selecciona ubicación</p>
+
+<input type="text" id="regHorario" placeholder="Horario">
+<input type="file" id="regImagen">
+
+<button type="submit">Registrar</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

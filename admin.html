@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="main-container admin-container">
+
+<h2>Panel Admin</h2>
+
+<input type="text" id="adminSearch" placeholder="Buscar..." oninput="buscarAdmin()" class="admin-search">
+
+<div id="admin-lista" class="admin-grid"></div>
+
+</div>
+
+<div id="modalEdit" class="modal">
+<div class="modal-content">
+
+<input type="text" id="editNombre">
+<textarea id="editDesc"></textarea>
+
+<input type="text" id="editTelefono">
+<input type="text" id="editUbicacion">
+<input type="text" id="editHorario">
+
+<input type="file" id="editImagen">
+
+<div class="modal-btns">
+<button onclick="guardarEdicion()">Guardar</button>
+<button onclick="cerrarModal()">Cancelar</button>
+</div>
+
+</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
