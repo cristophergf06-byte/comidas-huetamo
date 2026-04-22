@@ -346,7 +346,7 @@ window.onload = async ()=>{
 
 await cargarLocalesFirebase();
 
-if(document.getElementById("resultados-busqueda")){
+if(window.location.pathname.includes("buscador.html")){
 mostrarResultados(locales);
 }
 
