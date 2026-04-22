@@ -6,16 +6,24 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="bg-yellow">
+<body>
+
+<a href="admin-login.html" class="btn-admin">⚙️</a>
 
 <div class="main-container">
 
-<h1>🍔 Comidas Huetamo</h1>
-<p>Encuentra los mejores lugares para comer</p>
+<h1>Comidas Huetamo</h1>
 
-<button onclick="location.href='buscador.html'">Entrar</button>
+<div id="resultados-busqueda"></div>
 
 </div>
 
+<a href="registro.html" class="btn-float">+</a>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="script.js"></script>
 </body>
 </html>
