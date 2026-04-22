@@ -17,6 +17,7 @@ let locales = [];
 /* ================= LOGIN ================= */
 function loginAdmin(){
 let pass = document.getElementById("adminPass").value;
+
 if(pass === "Tecnologico2026"){
 localStorage.setItem("admin","true");
 location.href="admin.html";
@@ -65,14 +66,16 @@ return { id: doc.id, ...doc.data() };
 }
 
 
-
 /* ================= REGISTRO ================= */
 if(document.getElementById("formRegistro")){
 
-document.getElementById("formRegistro").onsubmit = function(e){
+document.getElementById("formRegistro").onsubmit = async function(e){
 e.preventDefault();
 
 let file = document.getElementById("regImagen").files[0];
+
+if(file){
+
 let reader = new FileReader();
 
 reader.onload = async function(){
@@ -81,7 +84,7 @@ let nuevo = {
 nombre: regNegocio.value,
 desc: regVenta.value,
 cat: regTiempo.value,
-img: reader.result || "",
+img: reader.result,
 telefono: regTelefono.value,
 ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
 horario: regHorario.value,
@@ -99,14 +102,35 @@ alert("❌ Error al guardar");
 
 };
 
-if(file){
 reader.readAsDataURL(file);
+
 }else{
-reader.onload();
+
+let nuevo = {
+nombre: regNegocio.value,
+desc: regVenta.value,
+cat: regTiempo.value,
+img: "",
+telefono: regTelefono.value,
+ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
+horario: regHorario.value,
+aprobado: false
+};
+
+try{
+await db.collection("locales").add(nuevo);
+alert("✅ Guardado correctamente");
+location.href="buscador.html";
+}catch(err){
+console.error(err);
+alert("❌ Error al guardar");
+}
+
 }
 
 };
 }
+
 
 /* ================= BUSCAR ================= */
 function buscarLocal(){
@@ -144,9 +168,7 @@ lista
 .filter(l => l.aprobado)
 .forEach(l=>{
 
-let linkMapa = l.ubicacion && l.ubicacion.startsWith("http")
-? l.ubicacion
-: "https://www.google.com/maps?q=" + encodeURIComponent(l.ubicacion || "");
+let linkMapa = "https://www.google.com/maps?q=" + encodeURIComponent(l.ubicacion || "");
 
 cont.innerHTML += `
 <div>
@@ -171,7 +193,7 @@ document.body.appendChild(cont);
 
 
 /* ================= RESULTADOS PAGE ================= */
-async function cargarResultadosPagina(){
+function cargarResultadosPagina(){
 
 let cont = document.getElementById("contenedor-cards");
 if(!cont) return;
@@ -205,7 +227,7 @@ cont.innerHTML += `
 
 
 /* ================= ADMIN ================= */
-async function mostrarAdmin(){
+function mostrarAdmin(){
 
 let cont = document.getElementById("admin-lista");
 if(!cont) return;
@@ -266,43 +288,60 @@ editHorario.value = l.horario || "";
 document.getElementById("modalEdit").style.display = "flex";
 }
 
-function guardarEdicion(){
+
+async function guardarEdicion(){
 
 let l = locales[editIndex];
+let file = document.getElementById("editImagen").files[0];
 
-let file = editImagen.files[0];
+if(file){
+
 let reader = new FileReader();
 
 reader.onload = async function(){
 
 let actualizado = {
-...l,
 nombre: editNombre.value,
 desc: editDesc.value,
 telefono: editTelefono.value,
 ubicacion: editUbicacion.value,
 horario: editHorario.value,
-img: file ? reader.result : l.img
+img: reader.result,
+aprobado: l.aprobado,
+cat: l.cat
 };
 
 await db.collection("locales").doc(l.id).update(actualizado);
-
 location.reload();
 };
 
-if(file){
 reader.readAsDataURL(file);
+
 }else{
-reader.onload();
+
+let actualizado = {
+nombre: editNombre.value,
+desc: editDesc.value,
+telefono: editTelefono.value,
+ubicacion: editUbicacion.value,
+horario: editHorario.value,
+img: l.img,
+aprobado: l.aprobado,
+cat: l.cat
+};
+
+await db.collection("locales").doc(l.id).update(actualizado);
+location.reload();
 }
 }
+
 
 function cerrarModal(){
 document.getElementById("modalEdit").style.display = "none";
 }
 
 
-/* ================= LOAD GENERAL ================= */
+/* ================= LOAD ================= */
 window.onload = async ()=>{
 
 await cargarLocalesFirebase();
