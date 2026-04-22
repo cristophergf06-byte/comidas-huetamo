@@ -1,5 +1,16 @@
 let locales = JSON.parse(localStorage.getItem('locales')) || [];
 
+/* ================= LOGIN ================= */
+function loginAdmin(){
+let pass = document.getElementById("adminPass").value;
+if(pass === "Tecnologico2026"){
+localStorage.setItem("admin","true");
+location.href="admin.html";
+}else{
+alert("❌ Contraseña incorrecta");
+}
+}
+
 /* ================= MAPA ================= */
 let lat = null;
 let lng = null;
@@ -8,23 +19,23 @@ if(document.getElementById("map")){
 let map = L.map('map').setView([18.62, -100.90], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
+attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 let marker;
 
 map.on('click', function(e){
-    lat = e.latlng.lat;
-    lng = e.latlng.lng;
+lat = e.latlng.lat;
+lng = e.latlng.lng;
 
-    if(marker){
-        map.removeLayer(marker);
-    }
+if(marker){
+map.removeLayer(marker);
+}
 
-    marker = L.marker([lat, lng]).addTo(map);
+marker = L.marker([lat, lng]).addTo(map);
 
-    document.getElementById("coords").innerText =
-        "Ubicación: " + lat.toFixed(5) + ", " + lng.toFixed(5);
+document.getElementById("coords").innerText =
+"Ubicación: " + lat.toFixed(5) + ", " + lng.toFixed(5);
 });
 }
 
@@ -54,14 +65,14 @@ localStorage.setItem("locales", JSON.stringify(locales));
 
 alert("⏳ Enviado para aprobación");
 location.href="buscador.html";
-}
+};
 
 if(file){
 reader.readAsDataURL(file);
 }else{
 reader.onload();
 }
-}
+};
 }
 
 /* ================= BUSCAR ================= */
@@ -73,14 +84,11 @@ l.nombre.toLowerCase().includes(texto) ||
 (l.desc && l.desc.toLowerCase().includes(texto))
 );
 
-localStorage.setItem("categoria","todos");
 mostrarResultados(resultados);
 }
 
 /* ================= CATEGORIA ================= */
 function verCategoria(cat){
-localStorage.setItem("categoria", cat);
-
 let filtrados = locales.filter(l =>
 (cat === "todos" || l.cat === cat)
 );
@@ -90,8 +98,6 @@ mostrarResultados(filtrados);
 
 /* ================= RESULTADOS ================= */
 function mostrarResultados(lista){
-
-document.body.className = "tema-" + (localStorage.getItem("categoria") || "todos");
 
 let viejo = document.getElementById("resultados-busqueda");
 if(viejo) viejo.remove();
@@ -103,15 +109,13 @@ lista
 .filter(l => l.aprobado)
 .forEach(l=>{
 
-let div = document.createElement("div");
-
 let linkMapa = l.ubicacion && l.ubicacion.startsWith("http")
 ? l.ubicacion
 : "https://www.google.com/maps?q=" + encodeURIComponent(l.ubicacion || "");
 
-div.innerHTML=`
+cont.innerHTML += `
+<div>
 <img src="${l.img || 'img/default.jpg'}" class="card-img">
-
 <div class="card-body">
 <h3>${l.nombre}</h3>
 <p>${l.desc}</p>
@@ -121,49 +125,32 @@ div.innerHTML=`
 <a href="tel:${l.telefono || ''}" class="btn-call">📞 Llamar</a>
 </div>
 
-<p class="horario">⏰ ${l.horario || "Horario no disponible"}</p>
+<p class="horario">⏰ ${l.horario || "No disponible"}</p>
+</div>
 </div>
 `;
-
-cont.appendChild(div);
 });
 
 document.body.appendChild(cont);
 }
 
 /* ================= ADMIN ================= */
-function buscarAdmin(){
-let texto = document.getElementById("adminSearch").value.toLowerCase();
+function mostrarAdmin(){
 
-let filtrados = locales.filter(l =>
-l.nombre.toLowerCase().includes(texto) ||
-(l.desc && l.desc.toLowerCase().includes(texto))
-);
-
-mostrarAdmin(filtrados);
-}
-
-function mostrarAdmin(lista){
 let cont = document.getElementById("admin-lista");
 if(!cont) return;
 
 cont.innerHTML = "";
 
-lista.forEach((l,i)=>{
+locales.forEach((l,i)=>{
 
-let div = document.createElement("div");
-div.className = "admin-card";
-
-div.innerHTML=`
+cont.innerHTML += `
+<div class="admin-card">
 <img src="${l.img || 'img/default.jpg'}" class="admin-img">
 
 <div class="admin-body">
 <h3>${l.nombre}</h3>
 <p>${l.desc}</p>
-
-<p>📞 ${l.telefono || "Sin teléfono"}</p>
-<p>📍 ${l.ubicacion || "Sin ubicación"}</p>
-<p>⏰ ${l.horario || "Sin horario"}</p>
 
 <p class="estado ${l.aprobado ? 'aprobado' : 'pendiente'}">
 ${l.aprobado ? "✔ Aprobado" : "⏳ Pendiente"}
@@ -175,17 +162,16 @@ ${l.aprobado ? "✔ Aprobado" : "⏳ Pendiente"}
 <button class="btn-eliminar" onclick="eliminar(${i})">Eliminar</button>
 </div>
 </div>
+</div>
 `;
-
-cont.appendChild(div);
 });
 }
 
-/* CARGA ADMIN */
 if(document.getElementById("admin-lista")){
-mostrarAdmin(locales);
+mostrarAdmin();
 }
 
+/* ================= FUNCIONES ADMIN ================= */
 function aprobar(i){
 locales[i].aprobado = true;
 localStorage.setItem("locales", JSON.stringify(locales));
@@ -198,12 +184,11 @@ localStorage.setItem("locales", JSON.stringify(locales));
 location.reload();
 }
 
-/* ================= EDITOR VISUAL ================= */
+/* ================= EDITAR ================= */
 let editIndex = null;
 
 function editar(i){
 editIndex = i;
-
 let l = locales[i];
 
 editNombre.value = l.nombre;
@@ -235,8 +220,6 @@ img: file ? reader.result : l.img
 };
 
 localStorage.setItem("locales", JSON.stringify(locales));
-
-cerrarModal();
 location.reload();
 };
 
@@ -251,18 +234,7 @@ function cerrarModal(){
 document.getElementById("modalEdit").style.display = "none";
 }
 
-/* ================= ACCESO REGISTRO ================= */
+/* ================= REGISTRO PUBLICO ================= */
 function verificarAcceso(){
 location.href="registro.html";
-}
-
-function loginAdmin(){
-let pass = document.getElementById("adminPass").value;
-
-if(pass === "Tecnologico2026"){
-localStorage.setItem("admin","true");
-location.href="admin.html";
-}else{
-alert("❌ Contraseña incorrecta");
-}
 }
