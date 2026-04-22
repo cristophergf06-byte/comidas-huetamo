@@ -67,36 +67,32 @@ return { id: doc.id, ...doc.data() };
 
 /* ================= REGISTRO ================= */
 if(document.getElementById("formRegistro")){
-document.getElementById("formRegistro").onsubmit = function(e){
+
+document.getElementById("formRegistro").onsubmit = async function(e){
 e.preventDefault();
-
-let file = regImagen?.files?.[0];
-let reader = new FileReader();
-
-reader.onload = async function(){
 
 let nuevo = {
 nombre: regNegocio.value,
 desc: regVenta.value,
 cat: regTiempo.value,
-img: reader.result || "",
+img: "",
 telefono: regTelefono.value,
 ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
 horario: regHorario.value,
 aprobado: false
 };
 
+try{
 await db.collection("locales").add(nuevo);
 
-alert("⏳ Enviado para aprobación");
+alert("✅ Guardado correctamente");
 location.href="buscador.html";
-};
 
-if(file){
-reader.readAsDataURL(file);
-}else{
-reader.onload();
+}catch(error){
+console.error(error);
+alert("❌ Error al guardar");
 }
+
 };
 }
 
