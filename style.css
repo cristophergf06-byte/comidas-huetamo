@@ -84,20 +84,21 @@ z-index:1000;
 
 /* ===== BOTON REGISTRO ===== */
 .btn-float{
-position:fixed;
-bottom:20px;
-right:20px;
-width:65px;
-height:65px;
-border-radius:50%;
-background:linear-gradient(135deg,#ff6d00,#ff3d00);
-color:white;
-font-size:2rem;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
-z-index:1000;
+position: fixed;
+bottom: 20px;
+right: 20px;
+width: 65px;
+height: 65px;
+border-radius: 50%;
+background: linear-gradient(135deg,#ff6d00,#ff3d00);
+color: white;
+font-size: 2rem;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+z-index: 9999; /* 🔥 CLAVE */
+text-decoration: none;
 }
 
 /* ===== GRID RESULTADOS ===== */
