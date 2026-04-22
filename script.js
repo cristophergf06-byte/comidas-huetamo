@@ -1,4 +1,19 @@
-let locales = JSON.parse(localStorage.getItem('locales')) || [];
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyABJrHksJy0IxPdm2AQyqZswCX6px5oUzs",
+  authDomain: "comidas-huetamo-50bf2.firebaseapp.com",
+  projectId: "comidas-huetamo-50bf2",
+  storageBucket: "comidas-huetamo-50bf2.firebasestorage.app",
+  messagingSenderId: "313677526895",
+  appId: "1:313677526895:web:0b9557c19cb4c219679a9a"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// 🔁 ARRAY GLOBAL (igual que antes)
+let locales = [];
+
 
 /* ================= LOGIN ================= */
 function loginAdmin(){
@@ -10,6 +25,7 @@ location.href="admin.html";
 alert("❌ Contraseña incorrecta");
 }
 }
+
 
 /* ================= MAPA ================= */
 let lat = null;
@@ -39,6 +55,17 @@ document.getElementById("coords").innerText =
 });
 }
 
+
+/* ================= CARGAR DESDE FIREBASE ================= */
+async function cargarLocalesFirebase(){
+let snapshot = await db.collection("locales").get();
+
+locales = snapshot.docs.map(doc => {
+return { id: doc.id, ...doc.data() };
+});
+}
+
+
 /* ================= REGISTRO ================= */
 if(document.getElementById("formRegistro")){
 document.getElementById("formRegistro").onsubmit = function(e){
@@ -47,7 +74,7 @@ e.preventDefault();
 let file = regImagen.files[0];
 let reader = new FileReader();
 
-reader.onload = function(){
+reader.onload = async function(){
 
 let nuevo = {
 nombre: regNegocio.value,
@@ -60,8 +87,8 @@ horario: regHorario.value,
 aprobado: false
 };
 
-locales.push(nuevo);
-localStorage.setItem("locales", JSON.stringify(locales));
+// 🔥 FIREBASE
+await db.collection("locales").add(nuevo);
 
 alert("⏳ Enviado para aprobación");
 location.href="buscador.html";
@@ -75,6 +102,7 @@ reader.onload();
 };
 }
 
+
 /* ================= BUSCAR ================= */
 function buscarLocal(){
 let texto = document.getElementById("inputBusqueda").value.toLowerCase();
@@ -87,6 +115,7 @@ l.nombre.toLowerCase().includes(texto) ||
 mostrarResultados(resultados);
 }
 
+
 /* ================= CATEGORIA ================= */
 function verCategoria(cat){
 let filtrados = locales.filter(l =>
@@ -95,6 +124,7 @@ let filtrados = locales.filter(l =>
 
 mostrarResultados(filtrados);
 }
+
 
 /* ================= RESULTADOS ================= */
 function mostrarResultados(lista){
@@ -134,8 +164,11 @@ cont.innerHTML += `
 document.body.appendChild(cont);
 }
 
+
 /* ================= ADMIN ================= */
-function mostrarAdmin(){
+async function mostrarAdmin(){
+
+await cargarLocalesFirebase();
 
 let cont = document.getElementById("admin-lista");
 if(!cont) return;
@@ -157,9 +190,9 @@ ${l.aprobado ? "✔ Aprobado" : "⏳ Pendiente"}
 </p>
 
 <div class="admin-btns">
-<button class="btn-aprobar" onclick="aprobar(${i})">Aprobar</button>
+<button class="btn-aprobar" onclick="aprobar('${l.id}')">Aprobar</button>
 <button onclick="editar(${i})">✏️ Editar</button>
-<button class="btn-eliminar" onclick="eliminar(${i})">Eliminar</button>
+<button class="btn-eliminar" onclick="eliminar('${l.id}')">Eliminar</button>
 </div>
 </div>
 </div>
@@ -171,18 +204,20 @@ if(document.getElementById("admin-lista")){
 mostrarAdmin();
 }
 
+
 /* ================= FUNCIONES ADMIN ================= */
-function aprobar(i){
-locales[i].aprobado = true;
-localStorage.setItem("locales", JSON.stringify(locales));
+async function aprobar(id){
+await db.collection("locales").doc(id).update({
+aprobado: true
+});
 location.reload();
 }
 
-function eliminar(i){
-locales.splice(i,1);
-localStorage.setItem("locales", JSON.stringify(locales));
+async function eliminar(id){
+await db.collection("locales").doc(id).delete();
 location.reload();
 }
+
 
 /* ================= EDITAR ================= */
 let editIndex = null;
@@ -207,9 +242,9 @@ let l = locales[editIndex];
 let file = editImagen.files[0];
 let reader = new FileReader();
 
-reader.onload = function(){
+reader.onload = async function(){
 
-locales[editIndex] = {
+let actualizado = {
 ...l,
 nombre: editNombre.value,
 desc: editDesc.value,
@@ -219,7 +254,9 @@ horario: editHorario.value,
 img: file ? reader.result : l.img
 };
 
-localStorage.setItem("locales", JSON.stringify(locales));
+// 🔥 FIREBASE UPDATE
+await db.collection("locales").doc(l.id).update(actualizado);
+
 location.reload();
 };
 
@@ -233,6 +270,18 @@ reader.onload();
 function cerrarModal(){
 document.getElementById("modalEdit").style.display = "none";
 }
+
+
+/* ================= CARGA INICIAL ================= */
+window.onload = async ()=>{
+await cargarLocalesFirebase();
+mostrarResultados(locales);
+
+if(document.getElementById("admin-lista")){
+mostrarAdmin();
+}
+};
+
 
 /* ================= REGISTRO PUBLICO ================= */
 function verificarAcceso(){
