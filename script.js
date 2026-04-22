@@ -65,17 +65,23 @@ return { id: doc.id, ...doc.data() };
 }
 
 
+
 /* ================= REGISTRO ================= */
 if(document.getElementById("formRegistro")){
 
-document.getElementById("formRegistro").onsubmit = async function(e){
+document.getElementById("formRegistro").onsubmit = function(e){
 e.preventDefault();
+
+let file = document.getElementById("regImagen").files[0];
+let reader = new FileReader();
+
+reader.onload = async function(){
 
 let nuevo = {
 nombre: regNegocio.value,
 desc: regVenta.value,
 cat: regTiempo.value,
-img: "",
+img: reader.result || "",
 telefono: regTelefono.value,
 ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
 horario: regHorario.value,
@@ -84,18 +90,23 @@ aprobado: false
 
 try{
 await db.collection("locales").add(nuevo);
-
 alert("✅ Guardado correctamente");
 location.href="buscador.html";
-
-}catch(error){
-console.error(error);
+}catch(err){
+console.error(err);
 alert("❌ Error al guardar");
 }
 
 };
+
+if(file){
+reader.readAsDataURL(file);
+}else{
+reader.onload();
 }
 
+};
+}
 
 /* ================= BUSCAR ================= */
 function buscarLocal(){
