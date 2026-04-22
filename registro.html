@@ -2,15 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-
-<!-- 🔥 IMPORTANTE PARA CELULAR -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Registrar</title>
 
 <link rel="stylesheet" href="style.css">
 
-<!-- 🗺️ LEAFLET MAP -->
+<!-- MAPA -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 </head>
@@ -40,23 +38,23 @@
 <option value="todos">Todo el día</option>
 </select>
 
+<!-- 📷 FOTO -->
+<input type="file" id="regImagen" accept="image/*">
+
 <!-- 🗺️ MAPA -->
 <div id="map" style="height:300px; border-radius:15px; margin-top:15px;"></div>
 <p id="coords">Selecciona ubicación en el mapa</p>
 
-<!-- 🔘 BOTÓN -->
-<button type="submit" style="position:relative; z-index:10;">
-Registrar
-</button>
+<button type="submit">Registrar</button>
 
 </form>
 
 </div>
 
-<!-- 🗺️ LEAFLET -->
+<!-- MAPA -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<!-- 🔥 FIREBASE -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
