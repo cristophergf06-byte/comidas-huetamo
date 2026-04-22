@@ -11,7 +11,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 🔁 ARRAY GLOBAL (igual que antes)
 let locales = [];
 
 
@@ -56,7 +55,7 @@ document.getElementById("coords").innerText =
 }
 
 
-/* ================= CARGAR DESDE FIREBASE ================= */
+/* ================= FIREBASE LOAD ================= */
 async function cargarLocalesFirebase(){
 let snapshot = await db.collection("locales").get();
 
@@ -71,7 +70,7 @@ if(document.getElementById("formRegistro")){
 document.getElementById("formRegistro").onsubmit = function(e){
 e.preventDefault();
 
-let file = regImagen.files[0];
+let file = regImagen?.files?.[0];
 let reader = new FileReader();
 
 reader.onload = async function(){
@@ -87,7 +86,6 @@ horario: regHorario.value,
 aprobado: false
 };
 
-// 🔥 FIREBASE
 await db.collection("locales").add(nuevo);
 
 alert("⏳ Enviado para aprobación");
@@ -126,7 +124,7 @@ mostrarResultados(filtrados);
 }
 
 
-/* ================= RESULTADOS ================= */
+/* ================= RESULTADOS GENERALES ================= */
 function mostrarResultados(lista){
 
 let viejo = document.getElementById("resultados-busqueda");
@@ -165,10 +163,42 @@ document.body.appendChild(cont);
 }
 
 
+/* ================= RESULTADOS PAGE ================= */
+async function cargarResultadosPagina(){
+
+let cont = document.getElementById("contenedor-cards");
+if(!cont) return;
+
+cont.innerHTML = "";
+
+locales
+.filter(l => l.aprobado)
+.forEach(l=>{
+
+let linkMapa = "https://www.google.com/maps?q=" + encodeURIComponent(l.ubicacion || "");
+
+cont.innerHTML += `
+<div>
+<img src="${l.img || 'img/default.jpg'}" class="card-img">
+<div class="card-body">
+<h3>${l.nombre}</h3>
+<p>${l.desc}</p>
+
+<div class="card-btns">
+<a href="${linkMapa}" target="_blank" class="btn-ubi">📍 Ubicación</a>
+<a href="tel:${l.telefono || ''}" class="btn-call">📞 Llamar</a>
+</div>
+
+<p class="horario">⏰ ${l.horario || "No disponible"}</p>
+</div>
+</div>
+`;
+});
+}
+
+
 /* ================= ADMIN ================= */
 async function mostrarAdmin(){
-
-await cargarLocalesFirebase();
 
 let cont = document.getElementById("admin-lista");
 if(!cont) return;
@@ -200,16 +230,10 @@ ${l.aprobado ? "✔ Aprobado" : "⏳ Pendiente"}
 });
 }
 
-if(document.getElementById("admin-lista")){
-mostrarAdmin();
-}
 
-
-/* ================= FUNCIONES ADMIN ================= */
+/* ================= ADMIN ACCIONES ================= */
 async function aprobar(id){
-await db.collection("locales").doc(id).update({
-aprobado: true
-});
+await db.collection("locales").doc(id).update({ aprobado: true });
 location.reload();
 }
 
@@ -254,7 +278,6 @@ horario: editHorario.value,
 img: file ? reader.result : l.img
 };
 
-// 🔥 FIREBASE UPDATE
 await db.collection("locales").doc(l.id).update(actualizado);
 
 location.reload();
@@ -272,18 +295,21 @@ document.getElementById("modalEdit").style.display = "none";
 }
 
 
-/* ================= CARGA INICIAL ================= */
+/* ================= LOAD GENERAL ================= */
 window.onload = async ()=>{
+
 await cargarLocalesFirebase();
+
+if(document.getElementById("resultados-busqueda")){
 mostrarResultados(locales);
+}
 
 if(document.getElementById("admin-lista")){
 mostrarAdmin();
 }
-};
 
-
-/* ================= REGISTRO PUBLICO ================= */
-function verificarAcceso(){
-location.href="registro.html";
+if(document.getElementById("contenedor-cards")){
+cargarResultadosPagina();
 }
+
+};
