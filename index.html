@@ -26,17 +26,18 @@
 
   .contenido {
     position: absolute;
-    top: 90%;
+    bottom: 40px; /* 🔥 ahora siempre queda abajo */
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     text-align: center;
-    color: white;
     width: 100%;
   }
 
-  .contenido h1 {
-    text-shadow: 2px 2px 5px black;
-    font-size: 32px;
+  .btn-main {
+    padding: 12px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
   }
 </style>
 </head>
@@ -50,7 +51,6 @@
   <img src="img/Huetamo.png" alt="Comida">
 
   <div class="contenido">
-
     <button onclick="location.href='buscador.html'" class="btn-main">
       Entrar
     </button>
