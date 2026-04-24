@@ -6,41 +6,56 @@
 
 <title>Comidas Huetamo</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+  body {
+    margin: 0;
+  }
+
+  .banner {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .contenido {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    width: 100%;
+  }
+
+  .contenido h1 {
+    text-shadow: 2px 2px 5px black;
+    font-size: 32px;
+  }
+</style>
 </head>
 
 <body>
 
 <a href="admin-login.html" class="btn-admin">⚙️</a>
 
-<!-- CONTENEDOR PRINCIPAL -->
-<div style="position:relative; text-align:center;">
+<!-- BANNER -->
+<div class="banner">
+  <img src="img/Huetamo.png" alt="Comida">
 
-  <!-- IMAGEN -->
-  <img src="img/Huetamo.png" alt="Comida"
-       style="width:100%; height:350px; object-fit:cover; display:block;">
+  <div class="contenido">
+    <h1>🍔 Comidas Huetamo 🍔</h1>
 
-  <!-- CONTENIDO ENCIMA -->
-  <div style="
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    color:white;
-    width:100%;
-  ">
-
-    <h1 style="text-shadow:2px 2px 5px black;">
-      🍔 Comidas Huetamo 🍔
-    </h1>
-
-    <button onclick="location.href='buscador.html'"
-            class="btn-main"
-            style="position:relative; z-index:2;">
+    <button onclick="location.href='buscador.html'" class="btn-main">
       Entrar
     </button>
-
   </div>
-
 </div>
 
 <a href="registro.html" class="btn-float">+</a>
