@@ -12,19 +12,34 @@
 
 <a href="admin-login.html" class="btn-admin">⚙️</a>
 
-<!-- IMAGEN ARRIBA -->
-<div>
-  <img src="img/Huetamo.png" alt="Comida" style="width:100%; height:auto; display:block;">
-</div>
+<!-- CONTENEDOR PRINCIPAL -->
+<div style="position:relative; text-align:center;">
 
-<!-- CONTENIDO ENCIMA VISUALMENTE -->
-<div class="main-container" style="margin-top:-1000px; text-align:center;">
+  <!-- IMAGEN -->
+  <img src="img/Huetamo.png" alt="Comida"
+       style="width:100%; height:350px; object-fit:cover; display:block;">
 
-  <h1>🍔 Comidas Huetamo 🍔</h1>
+  <!-- CONTENIDO ENCIMA -->
+  <div style="
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    color:white;
+    width:100%;
+  ">
 
-  <button onclick="location.href='buscador.html'" class="btn-main">
-    Entrar
-  </button>
+    <h1 style="text-shadow:2px 2px 5px black;">
+      🍔 Comidas Huetamo 🍔
+    </h1>
+
+    <button onclick="location.href='buscador.html'"
+            class="btn-main"
+            style="position:relative; z-index:2;">
+      Entrar
+    </button>
+
+  </div>
 
 </div>
 
