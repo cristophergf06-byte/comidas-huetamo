@@ -8,53 +8,87 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-  body {
-    margin: 0;
-  }
+body{
+margin:0;
+}
 
-  .banner {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-  }
+/* ===== BANNER ===== */
+.banner{
+position:relative;
+width:100%;
+height:100vh;
+overflow:hidden;
+}
 
-  .banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.banner img{
+width:100%;
+height:100%;
+object-fit:cover;
+filter: brightness(0.7); /* 🔥 efecto oscuro */
+}
 
-  .contenido {
-    position: absolute;
-    bottom: 40px; /* 🔥 ahora siempre queda abajo */
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 100%;
-  }
+/* ===== CONTENIDO ===== */
+.contenido{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+text-align:center;
+width:100%;
+}
 
-  .btn-main {
-    padding: 12px 25px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-  }
+/* ===== BOTON PRINCIPAL ===== */
+.btn-main{
+padding:14px 30px;
+border-radius:25px;
+border:none;
+cursor:pointer;
+background: linear-gradient(135deg,#ff6d00,#ff3d00);
+color:white;
+font-size:16px;
+font-weight:bold;
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+transition:0.3s;
+}
+
+.btn-main:hover{
+transform:scale(1.05);
+}
+
+/* ===== TEXTO ===== */
+.titulo-home{
+position:absolute;
+top:30%;
+left:50%;
+transform:translateX(-50%);
+color:white;
+font-size:32px;
+font-weight:bold;
+text-shadow:0 3px 10px rgba(0,0,0,0.6);
+}
 </style>
 </head>
 
 <body>
 
+<!-- 🔥 LOADER -->
+<div id="loader" class="loader">Cargando...</div>
+
 <a href="admin-login.html" class="btn-admin">⚙️</a>
 
 <!-- BANNER -->
 <div class="banner">
-  <img src="img/Huetamo.png" alt="Comida">
 
-  <div class="contenido">
-    <button onclick="location.href='buscador.html'" class="btn-main">
-      Entrar
-    </button>
-  </div>
+<img src="img/Huetamo.png" alt="Comida">
+
+<h1 class="titulo-home">Comidas Huetamo</h1>
+
+<div class="contenido">
+<button onclick="location.href='buscador.html'" class="btn-main">
+Entrar
+</button>
+</div>
+
 </div>
 
 <a href="registro.html" class="btn-float">+</a>
