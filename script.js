@@ -10,10 +10,13 @@ const db = firebase.firestore();
 
 let locales = [];
 
-/* ===== LOADER ===== */
-function mostrarLoader(){
+/* ===== LOADER PRO ===== */
+function mostrarLoader(mensaje="Cargando..."){
 let l = document.getElementById("loader");
-if(l) l.style.display="flex";
+if(l){
+l.innerText = mensaje;
+l.style.display="flex";
+}
 }
 
 function ocultarLoader(){
@@ -59,7 +62,7 @@ document.getElementById("coords").innerText =
 
 /* ================= FIREBASE LOAD ================= */
 async function cargarLocalesFirebase(){
-mostrarLoader();
+mostrarLoader("📡 Cargando negocios...");
 
 let snapshot = await db.collection("locales").get();
 
@@ -73,7 +76,7 @@ if(document.getElementById("formRegistro")){
 document.getElementById("formRegistro").onsubmit = async function(e){
 e.preventDefault();
 
-mostrarLoader();
+mostrarLoader("⏳ Registrando negocio...");
 
 let file = document.getElementById("regImagen").files[0];
 
@@ -92,16 +95,19 @@ if(file){
 let reader = new FileReader();
 reader.onload = async function(){
 nuevo.img = reader.result;
+
 await db.collection("locales").add(nuevo);
+
 ocultarLoader();
-alert("✅ Guardado correctamente");
+alert("✅ Negocio registrado correctamente");
 location.href="buscador.html";
 };
 reader.readAsDataURL(file);
 }else{
 await db.collection("locales").add(nuevo);
+
 ocultarLoader();
-alert("✅ Guardado correctamente");
+alert("✅ Negocio registrado correctamente");
 location.href="buscador.html";
 }
 };
@@ -109,13 +115,19 @@ location.href="buscador.html";
 
 /* ================= BUSCAR ================= */
 function buscarLocal(){
+mostrarLoader("🔍 Buscando negocios...");
+
 let texto = document.getElementById("inputBusqueda").value.toLowerCase();
 
 let resultados = locales.filter(l =>
 l.nombre.toLowerCase().includes(texto)
+&& l.aprobado
 );
 
+setTimeout(()=>{
 mostrarResultados(resultados);
+ocultarLoader();
+}, 500);
 }
 
 /* ================= RESULTADOS ================= */
@@ -125,6 +137,15 @@ let cont = document.getElementById("resultados-busqueda");
 if(!cont) return;
 
 cont.innerHTML="";
+
+/* 🔥 SOLO APROBADOS */
+lista = lista.filter(l => l.aprobado);
+
+/* 🔥 SIN RESULTADOS */
+if(lista.length === 0){
+cont.innerHTML = "<p>No se encontraron negocios</p>";
+return;
+}
 
 lista.forEach(l=>{
 
@@ -198,7 +219,7 @@ cont.innerHTML += `
 });
 }
 
-/* ================= BUSCAR ADMIN (ARREGLADO) ================= */
+/* ================= BUSCAR ADMIN ================= */
 function buscarAdmin(){
 let texto = document.getElementById("adminSearch").value.toLowerCase();
 
@@ -229,7 +250,6 @@ cont.innerHTML += `
 <button onclick="editar(${i})">✏️</button>
 <button onclick="eliminar('${l.id}')">🗑</button>
 </div>
-
 </div>
 </div>
 `;
@@ -238,13 +258,13 @@ cont.innerHTML += `
 
 /* ================= ACCIONES ================= */
 async function aprobar(id){
-mostrarLoader();
+mostrarLoader("✔ Aprobando negocio...");
 await db.collection("locales").doc(id).update({ aprobado: true });
 location.reload();
 }
 
 async function eliminar(id){
-mostrarLoader();
+mostrarLoader("🗑 Eliminando negocio...");
 await db.collection("locales").doc(id).delete();
 location.reload();
 }
