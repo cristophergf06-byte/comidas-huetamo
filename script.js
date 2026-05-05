@@ -11,7 +11,7 @@ const db = firebase.firestore();
 let locales = [];
 let localEditando = null;
 
-/* ===== LOADER PRO ===== */
+/* ===== LOADER ===== */
 function mostrarLoader(mensaje="Cargando..."){
 let l = document.getElementById("loader");
 if(l){
@@ -61,7 +61,7 @@ document.getElementById("coords").innerText =
 });
 }
 
-/* ================= FIREBASE LOAD ================= */
+/* ================= FIREBASE ================= */
 async function cargarLocalesFirebase(){
 mostrarLoader("📡 Cargando negocios...");
 
@@ -100,7 +100,7 @@ nuevo.img = reader.result;
 await db.collection("locales").add(nuevo);
 
 ocultarLoader();
-alert("✅ Negocio registrado correctamente");
+alert("✅ Negocio registrado");
 location.href="buscador.html";
 };
 reader.readAsDataURL(file);
@@ -108,7 +108,7 @@ reader.readAsDataURL(file);
 await db.collection("locales").add(nuevo);
 
 ocultarLoader();
-alert("✅ Negocio registrado correctamente");
+alert("✅ Negocio registrado");
 location.href="buscador.html";
 }
 };
@@ -116,19 +116,18 @@ location.href="buscador.html";
 
 /* ================= BUSCAR ================= */
 function buscarLocal(){
-mostrarLoader("🔍 Buscando negocios...");
+mostrarLoader("🔍 Buscando...");
 
 let texto = document.getElementById("inputBusqueda").value.toLowerCase();
 
 let resultados = locales.filter(l =>
-l.nombre.toLowerCase().includes(texto)
-&& l.aprobado
+l.nombre.toLowerCase().includes(texto) && l.aprobado
 );
 
 setTimeout(()=>{
 mostrarResultados(resultados);
 ocultarLoader();
-}, 500);
+}, 400);
 }
 
 /* ================= ABIERTO ================= */
@@ -138,45 +137,36 @@ if(!horario) return false;
 let partes = horario.split("-");
 if(partes.length !== 2) return false;
 
-let ahora = new Date();
-let horaActual = ahora.getHours();
-
+let hora = new Date().getHours();
 let inicio = parseInt(partes[0]);
 let fin = parseInt(partes[1]);
 
-return horaActual >= inicio && horaActual < fin;
+return hora >= inicio && hora < fin;
 }
 
 /* ================= FILTRO ================= */
 function verCategoria(cat){
 
-mostrarLoader("🍽 Filtrando negocios...");
+mostrarLoader("🍽 Filtrando...");
 
 let filtrados = locales.filter(l => {
 
-if(!l.aprobado) return false;
-if(!l.horario) return false;
+if(!l.aprobado || !l.horario) return false;
 
-let partes = l.horario.split("-");
-if(partes.length !== 2) return false;
+let [ini, fin] = l.horario.split("-").map(n=>parseInt(n));
 
-let inicio = parseInt(partes[0]);
-let fin = parseInt(partes[1]);
-
-if(cat === "mañana") return inicio < 12;
-if(cat === "tarde") return inicio < 18 && fin > 12;
+if(cat === "mañana") return ini < 12;
+if(cat === "tarde") return ini < 18 && fin > 12;
 if(cat === "noche") return fin >= 18;
 if(cat === "todos") return true;
 
 return false;
-
 });
 
 setTimeout(()=>{
 mostrarResultados(filtrados);
 ocultarLoader();
 }, 400);
-
 }
 
 /* ================= RESULTADOS ================= */
@@ -190,7 +180,7 @@ cont.innerHTML="";
 lista = lista.filter(l => l.aprobado);
 
 if(lista.length === 0){
-cont.innerHTML = "<p>No se encontraron negocios</p>";
+cont.innerHTML = "<p>No hay resultados</p>";
 return;
 }
 
@@ -202,22 +192,61 @@ cont.innerHTML += `
 <div onclick='verDetalle(${JSON.stringify(l)})'>
 <img src="${l.img || ''}" class="card-img">
 <div class="card-body">
+
 <h3>${l.nombre}</h3>
 
-<p style="font-weight:bold; color:${estaAbierto(l.horario) ? 'green' : 'red'}">
+<p style="color:${estaAbierto(l.horario)?'green':'red'};font-weight:bold;">
 ${estaAbierto(l.horario) ? '🟢 Abierto ahora' : '🔴 Cerrado'}
 </p>
 
 <p>${l.desc || ''}</p>
 
 <div class="card-btns">
-<a href="${link}" target="_blank" class="btn-ubi">📍</a>
-<a href="tel:${l.telefono}" class="btn-call">📞</a>
+<a href="${link}" target="_blank">📍</a>
+<a href="tel:${l.telefono}">📞</a>
 </div>
+
 </div>
 </div>
 `;
 });
+}
+
+/* ================= DETALLE ================= */
+function verDetalle(local){
+
+let modal = document.createElement("div");
+modal.className="modal";
+modal.style.display="flex";
+
+modal.innerHTML = `
+<div class="modal-content">
+
+<h2>${local.nombre}</h2>
+
+<img src="${local.img || ''}" style="width:100%;border-radius:15px;">
+
+<p style="color:${estaAbierto(local.horario)?'green':'red'};font-weight:bold;">
+${estaAbierto(local.horario) ? '🟢 Abierto ahora' : '🔴 Cerrado'}
+</p>
+
+<p><b>Descripción:</b> ${local.desc || ''}</p>
+<p><b>Teléfono:</b> ${local.telefono || ''}</p>
+<p><b>Ubicación:</b> ${local.ubicacion || ''}</p>
+<p><b>Horario:</b> ${local.horario || ''}</p>
+
+<a href="https://www.google.com/maps?q=${encodeURIComponent(local.ubicacion || '')}" target="_blank">
+📍 Ver en mapa
+</a>
+
+<br><br>
+
+<button onclick="this.parentElement.parentElement.remove()">Cerrar</button>
+
+</div>
+`;
+
+document.body.appendChild(modal);
 }
 
 /* ================= ADMIN ================= */
@@ -249,35 +278,31 @@ cont.innerHTML += `
 });
 }
 
-/* ================= EDITAR (🔥 NUEVO) ================= */
+/* ================= EDITAR ================= */
 function editar(index){
 
 localEditando = locales[index];
 
 document.getElementById("modalEdit").style.display = "flex";
 
-document.getElementById("editNombre").value = localEditando.nombre;
-document.getElementById("editDesc").value = localEditando.desc;
-document.getElementById("editTelefono").value = localEditando.telefono;
-document.getElementById("editUbicacion").value = localEditando.ubicacion;
-document.getElementById("editHorario").value = localEditando.horario;
+editNombre.value = localEditando.nombre;
+editDesc.value = localEditando.desc;
+editTelefono.value = localEditando.telefono;
+editUbicacion.value = localEditando.ubicacion;
+editHorario.value = localEditando.horario;
 }
 
 async function guardarEdicion(){
 
-if(!localEditando) return;
+mostrarLoader("💾 Guardando...");
 
-mostrarLoader("💾 Guardando cambios...");
-
-let actualizado = {
-nombre: document.getElementById("editNombre").value,
-desc: document.getElementById("editDesc").value,
-telefono: document.getElementById("editTelefono").value,
-ubicacion: document.getElementById("editUbicacion").value,
-horario: document.getElementById("editHorario").value
-};
-
-await db.collection("locales").doc(localEditando.id).update(actualizado);
+await db.collection("locales").doc(localEditando.id).update({
+nombre: editNombre.value,
+desc: editDesc.value,
+telefono: editTelefono.value,
+ubicacion: editUbicacion.value,
+horario: editHorario.value
+});
 
 ocultarLoader();
 cerrarModal();
@@ -290,13 +315,13 @@ document.getElementById("modalEdit").style.display = "none";
 
 /* ================= ACCIONES ================= */
 async function aprobar(id){
-mostrarLoader("✔ Aprobando negocio...");
+mostrarLoader("✔ Aprobando...");
 await db.collection("locales").doc(id).update({ aprobado: true });
 location.reload();
 }
 
 async function eliminar(id){
-mostrarLoader("🗑 Eliminando negocio...");
+mostrarLoader("🗑 Eliminando...");
 await db.collection("locales").doc(id).delete();
 location.reload();
 }
