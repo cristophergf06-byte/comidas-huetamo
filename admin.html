@@ -2,17 +2,27 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+
+<!-- 🔥 RESPONSIVE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Panel de Administración</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- 🔥 LOADER -->
+<div id="loader" class="loader">Cargando...</div>
+
 <div class="main-container admin-container">
 
 <h2>⚙️ Panel de Administración</h2>
 
-<!-- BUSCADOR -->
+<!-- 🔙 BOTÓN REGRESAR -->
+<button onclick="history.back()" class="btn-back">⬅ Regresar</button>
+
+<!-- 🔍 BUSCADOR -->
 <input 
 type="text" 
 id="adminSearch" 
@@ -20,12 +30,15 @@ placeholder="🔍 Buscar negocio..."
 oninput="buscarAdmin()" 
 class="admin-search">
 
-<!-- LISTA -->
+<!-- 🔥 BOTÓN BUSCAR EXTRA -->
+<button onclick="buscarAdmin()">Buscar</button>
+
+<!-- 📋 LISTA -->
 <div id="admin-lista" class="admin-grid"></div>
 
 </div>
 
-<!-- MODAL EDITAR -->
+<!-- ✏️ MODAL EDITAR -->
 <div id="modalEdit" class="modal">
 <div class="modal-content">
 
@@ -48,7 +61,7 @@ class="admin-search">
 </div>
 </div>
 
-<!-- 🔥 FIREBASE -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
