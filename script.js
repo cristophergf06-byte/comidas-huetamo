@@ -130,6 +130,27 @@ ocultarLoader();
 }, 500);
 }
 
+/* ================= FILTRO POR CATEGORIA (🔥 NUEVO) ================= */
+function verCategoria(cat){
+
+mostrarLoader("🍽 Filtrando negocios...");
+
+let filtrados;
+
+if(cat === "todos"){
+filtrados = locales.filter(l => l.aprobado);
+}else{
+filtrados = locales.filter(l =>
+l.cat === cat && l.aprobado
+);
+}
+
+setTimeout(()=>{
+mostrarResultados(filtrados);
+ocultarLoader();
+}, 400);
+}
+
 /* ================= RESULTADOS ================= */
 function mostrarResultados(lista){
 
@@ -138,10 +159,10 @@ if(!cont) return;
 
 cont.innerHTML="";
 
-/* 🔥 SOLO APROBADOS */
+/* SOLO APROBADOS */
 lista = lista.filter(l => l.aprobado);
 
-/* 🔥 SIN RESULTADOS */
+/* SIN RESULTADOS */
 if(lista.length === 0){
 cont.innerHTML = "<p>No se encontraron negocios</p>";
 return;
