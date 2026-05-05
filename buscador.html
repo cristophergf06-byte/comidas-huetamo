@@ -2,11 +2,18 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+
+<!-- 🔥 RESPONSIVE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Buscador</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
+<!-- 🔥 LOADER -->
+<div id="loader" class="loader">Cargando...</div>
 
 <a href="admin-login.html" class="btn-admin">⚙️</a>
 
@@ -14,9 +21,14 @@
 
 <h2>¿Dónde comer?</h2>
 
+<!-- 🔍 BUSCADOR -->
 <input type="text" id="inputBusqueda" placeholder="Buscar negocio...">
 <button onclick="buscarLocal()">🔍 Buscar</button>
 
+<!-- 🔥 BOTÓN REGRESAR -->
+<button onclick="history.back()" class="btn-back">⬅ Regresar</button>
+
+<!-- 🍽 FILTROS -->
 <div class="filter-btns">
 <button onclick="verCategoria('mañana')">Mañana</button>
 <button onclick="verCategoria('tarde')">Tarde</button>
@@ -26,9 +38,10 @@
 
 </div>
 
+<!-- ➕ REGISTRAR -->
 <a href="registro.html" class="btn-float">＋</a>
 
-<!-- 🔥 FIREBASE -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
