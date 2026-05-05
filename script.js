@@ -9,6 +9,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let locales = [];
+let localEditando = null;
 
 /* ===== LOADER PRO ===== */
 function mostrarLoader(mensaje="Cargando..."){
@@ -130,9 +131,8 @@ ocultarLoader();
 }, 500);
 }
 
-/* ================= FUNCIÓN ABIERTO ================= */
+/* ================= ABIERTO ================= */
 function estaAbierto(horario){
-
 if(!horario) return false;
 
 let partes = horario.split("-");
@@ -147,7 +147,7 @@ let fin = parseInt(partes[1]);
 return horaActual >= inicio && horaActual < fin;
 }
 
-/* ================= FILTRO POR HORARIO ================= */
+/* ================= FILTRO ================= */
 function verCategoria(cat){
 
 mostrarLoader("🍽 Filtrando negocios...");
@@ -163,21 +163,10 @@ if(partes.length !== 2) return false;
 let inicio = parseInt(partes[0]);
 let fin = parseInt(partes[1]);
 
-if(cat === "mañana"){
-return inicio < 12;
-}
-
-if(cat === "tarde"){
-return inicio < 18 && fin > 12;
-}
-
-if(cat === "noche"){
-return fin >= 18;
-}
-
-if(cat === "todos"){
-return true;
-}
+if(cat === "mañana") return inicio < 12;
+if(cat === "tarde") return inicio < 18 && fin > 12;
+if(cat === "noche") return fin >= 18;
+if(cat === "todos") return true;
 
 return false;
 
@@ -231,28 +220,6 @@ ${estaAbierto(l.horario) ? '🟢 Abierto ahora' : '🔴 Cerrado'}
 });
 }
 
-/* ================= DETALLE ================= */
-function verDetalle(local){
-
-let modal = document.createElement("div");
-modal.className="modal";
-modal.style.display="flex";
-
-modal.innerHTML = `
-<div class="modal-content">
-<h2>${local.nombre}</h2>
-<img src="${local.img}" style="width:100%;border-radius:15px;">
-<p>${local.desc}</p>
-<p><b>Tel:</b> ${local.telefono}</p>
-<p><b>Ubicación:</b> ${local.ubicacion}</p>
-<p><b>Horario:</b> ${local.horario}</p>
-<button onclick="this.parentElement.parentElement.remove()">Cerrar</button>
-</div>
-`;
-
-document.body.appendChild(modal);
-}
-
 /* ================= ADMIN ================= */
 function mostrarAdmin(){
 
@@ -282,41 +249,43 @@ cont.innerHTML += `
 });
 }
 
-/* ================= BUSCAR ADMIN ================= */
-function buscarAdmin(){
-let texto = document.getElementById("adminSearch").value.toLowerCase();
+/* ================= EDITAR (🔥 NUEVO) ================= */
+function editar(index){
 
-let filtrados = locales.filter(l =>
-l.nombre.toLowerCase().includes(texto)
-);
+localEditando = locales[index];
 
-mostrarAdminFiltrado(filtrados);
+document.getElementById("modalEdit").style.display = "flex";
+
+document.getElementById("editNombre").value = localEditando.nombre;
+document.getElementById("editDesc").value = localEditando.desc;
+document.getElementById("editTelefono").value = localEditando.telefono;
+document.getElementById("editUbicacion").value = localEditando.ubicacion;
+document.getElementById("editHorario").value = localEditando.horario;
 }
 
-function mostrarAdminFiltrado(lista){
+async function guardarEdicion(){
 
-let cont = document.getElementById("admin-lista");
-cont.innerHTML="";
+if(!localEditando) return;
 
-lista.forEach((l,i)=>{
+mostrarLoader("💾 Guardando cambios...");
 
-cont.innerHTML += `
-<div class="admin-card">
-<img src="${l.img || ''}" class="admin-img">
+let actualizado = {
+nombre: document.getElementById("editNombre").value,
+desc: document.getElementById("editDesc").value,
+telefono: document.getElementById("editTelefono").value,
+ubicacion: document.getElementById("editUbicacion").value,
+horario: document.getElementById("editHorario").value
+};
 
-<div class="admin-body">
-<h3>${l.nombre}</h3>
-<p>${l.desc || ''}</p>
+await db.collection("locales").doc(localEditando.id).update(actualizado);
 
-<div class="admin-btns">
-<button onclick="aprobar('${l.id}')">✔</button>
-<button onclick="editar(${i})">✏️</button>
-<button onclick="eliminar('${l.id}')">🗑</button>
-</div>
-</div>
-</div>
-`;
-});
+ocultarLoader();
+cerrarModal();
+location.reload();
+}
+
+function cerrarModal(){
+document.getElementById("modalEdit").style.display = "none";
 }
 
 /* ================= ACCIONES ================= */
