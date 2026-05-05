@@ -2,22 +2,35 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+
+<!-- 🔥 RESPONSIVE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Resultados</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
+<!-- 🔥 LOADER -->
+<div id="loader" class="loader">Cargando...</div>
+
+<!-- 🏠 INICIO -->
 <button class="btn-main" onclick="location.href='index.html'">🏠 Inicio</button>
 
-<h2 id="titulo"></h2>
+<h2 id="titulo">Resultados</h2>
+
+<!-- 📋 CARDS -->
 <div id="contenedor-cards"></div>
 
-<button onclick="location.href='buscador.html'">⬅ Regresar</button>
+<!-- 🔙 REGRESAR -->
+<button onclick="history.back()" class="btn-back">⬅ Regresar</button>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script src="script.js"></script>
+
 </body>
 </html>
