@@ -10,14 +10,19 @@
 
 <!-- MAPA -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
 </head>
 
 <body>
 
+<!-- 🔥 LOADER -->
+<div id="loader" class="loader">Cargando...</div>
+
 <div class="registro-container">
 
 <h2>Registrar negocio</h2>
+
+<!-- 🔙 BOTÓN REGRESAR -->
+<button onclick="history.back()" class="btn-back">⬅ Regresar</button>
 
 <form id="formRegistro">
 
@@ -42,7 +47,7 @@
 <input type="file" id="regImagen" accept="image/*">
 
 <!-- 🗺️ MAPA -->
-<div id="map" style="height:300px; border-radius:15px; margin-top:15px;"></div>
+<div id="map"></div>
 <p id="coords">Selecciona ubicación en el mapa</p>
 
 <button type="submit">Registrar</button>
