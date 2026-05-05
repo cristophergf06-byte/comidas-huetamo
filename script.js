@@ -130,25 +130,64 @@ ocultarLoader();
 }, 500);
 }
 
-/* ================= FILTRO POR CATEGORIA (🔥 NUEVO) ================= */
+/* ================= FUNCIÓN ABIERTO ================= */
+function estaAbierto(horario){
+
+if(!horario) return false;
+
+let partes = horario.split("-");
+if(partes.length !== 2) return false;
+
+let ahora = new Date();
+let horaActual = ahora.getHours();
+
+let inicio = parseInt(partes[0]);
+let fin = parseInt(partes[1]);
+
+return horaActual >= inicio && horaActual < fin;
+}
+
+/* ================= FILTRO POR HORARIO ================= */
 function verCategoria(cat){
 
 mostrarLoader("🍽 Filtrando negocios...");
 
-let filtrados;
+let filtrados = locales.filter(l => {
+
+if(!l.aprobado) return false;
+if(!l.horario) return false;
+
+let partes = l.horario.split("-");
+if(partes.length !== 2) return false;
+
+let inicio = parseInt(partes[0]);
+let fin = parseInt(partes[1]);
+
+if(cat === "mañana"){
+return inicio < 12;
+}
+
+if(cat === "tarde"){
+return inicio < 18 && fin > 12;
+}
+
+if(cat === "noche"){
+return fin >= 18;
+}
 
 if(cat === "todos"){
-filtrados = locales.filter(l => l.aprobado);
-}else{
-filtrados = locales.filter(l =>
-l.cat === cat && l.aprobado
-);
+return true;
 }
+
+return false;
+
+});
 
 setTimeout(()=>{
 mostrarResultados(filtrados);
 ocultarLoader();
 }, 400);
+
 }
 
 /* ================= RESULTADOS ================= */
@@ -159,10 +198,8 @@ if(!cont) return;
 
 cont.innerHTML="";
 
-/* SOLO APROBADOS */
 lista = lista.filter(l => l.aprobado);
 
-/* SIN RESULTADOS */
 if(lista.length === 0){
 cont.innerHTML = "<p>No se encontraron negocios</p>";
 return;
@@ -177,6 +214,11 @@ cont.innerHTML += `
 <img src="${l.img || ''}" class="card-img">
 <div class="card-body">
 <h3>${l.nombre}</h3>
+
+<p style="font-weight:bold; color:${estaAbierto(l.horario) ? 'green' : 'red'}">
+${estaAbierto(l.horario) ? '🟢 Abierto ahora' : '🔴 Cerrado'}
+</p>
+
 <p>${l.desc || ''}</p>
 
 <div class="card-btns">
