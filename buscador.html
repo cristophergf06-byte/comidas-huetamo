@@ -25,7 +25,7 @@
 <input type="text" id="inputBusqueda" placeholder="Buscar negocio...">
 <button onclick="buscarLocal()">🔍 Buscar</button>
 
-<!-- 🔥 BOTÓN REGRESAR -->
+<!-- 🔙 REGRESAR -->
 <button onclick="history.back()" class="btn-back">⬅ Regresar</button>
 
 <!-- 🍽 FILTROS -->
@@ -35,6 +35,9 @@
 <button onclick="verCategoria('noche')">Noche</button>
 <button onclick="verCategoria('todos')">Todo el día</button>
 </div>
+
+<!-- 🔥 🔥 🔥 ESTO FALTABA -->
+<div id="resultados-busqueda"></div>
 
 </div>
 
@@ -46,5 +49,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script src="script.js"></script>
+
 </body>
 </html>
