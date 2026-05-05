@@ -77,47 +77,29 @@ mostrarLoader();
 
 let file = document.getElementById("regImagen").files[0];
 
-if(file){
-
-let reader = new FileReader();
-
-reader.onload = async function(){
-
 let nuevo = {
-nombre: regNegocio.value,
-desc: regVenta.value,
-cat: regTiempo.value,
-img: reader.result,
-telefono: regTelefono.value,
-ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
-horario: regHorario.value,
+nombre: document.getElementById("regNegocio").value,
+desc: document.getElementById("regVenta").value,
+cat: document.getElementById("regTiempo").value,
+img: "",
+telefono: document.getElementById("regTelefono").value,
+ubicacion: lat && lng ? lat + "," + lng : document.getElementById("regUbicacion").value,
+horario: document.getElementById("regHorario").value,
 aprobado: false
 };
 
+if(file){
+let reader = new FileReader();
+reader.onload = async function(){
+nuevo.img = reader.result;
 await db.collection("locales").add(nuevo);
-
 ocultarLoader();
 alert("✅ Guardado correctamente");
 location.href="buscador.html";
 };
-
 reader.readAsDataURL(file);
-
 }else{
-
-let nuevo = {
-nombre: regNegocio.value,
-desc: regVenta.value,
-cat: regTiempo.value,
-img: "",
-telefono: regTelefono.value,
-ubicacion: lat && lng ? lat + "," + lng : regUbicacion.value,
-horario: regHorario.value,
-aprobado: false
-};
-
 await db.collection("locales").add(nuevo);
-
 ocultarLoader();
 alert("✅ Guardado correctamente");
 location.href="buscador.html";
@@ -127,7 +109,7 @@ location.href="buscador.html";
 
 /* ================= BUSCAR ================= */
 function buscarLocal(){
-let texto = inputBusqueda.value.toLowerCase();
+let texto = document.getElementById("inputBusqueda").value.toLowerCase();
 
 let resultados = locales.filter(l =>
 l.nombre.toLowerCase().includes(texto)
@@ -144,7 +126,7 @@ if(!cont) return;
 
 cont.innerHTML="";
 
-lista.filter(l=>l.aprobado).forEach(l=>{
+lista.forEach(l=>{
 
 let link = "https://www.google.com/maps?q=" + encodeURIComponent(l.ubicacion || "");
 
@@ -153,7 +135,7 @@ cont.innerHTML += `
 <img src="${l.img || ''}" class="card-img">
 <div class="card-body">
 <h3>${l.nombre}</h3>
-<p>${l.desc}</p>
+<p>${l.desc || ''}</p>
 
 <div class="card-btns">
 <a href="${link}" target="_blank" class="btn-ubi">📍</a>
@@ -165,7 +147,7 @@ cont.innerHTML += `
 });
 }
 
-/* ================= DETALLE PRO ================= */
+/* ================= DETALLE ================= */
 function verDetalle(local){
 
 let modal = document.createElement("div");
@@ -203,7 +185,7 @@ cont.innerHTML += `
 
 <div class="admin-body">
 <h3>${l.nombre}</h3>
-<p>${l.desc}</p>
+<p>${l.desc || ''}</p>
 
 <div class="admin-btns">
 <button onclick="aprobar('${l.id}')">✔</button>
@@ -216,19 +198,41 @@ cont.innerHTML += `
 });
 }
 
-/* ================= BUSCAR ADMIN ================= */
+/* ================= BUSCAR ADMIN (ARREGLADO) ================= */
 function buscarAdmin(){
-let texto = adminSearch.value.toLowerCase();
+let texto = document.getElementById("adminSearch").value.toLowerCase();
 
 let filtrados = locales.filter(l =>
 l.nombre.toLowerCase().includes(texto)
 );
 
+mostrarAdminFiltrado(filtrados);
+}
+
+function mostrarAdminFiltrado(lista){
+
 let cont = document.getElementById("admin-lista");
 cont.innerHTML="";
 
-filtrados.forEach(l=>{
-cont.innerHTML += `<div class="admin-card">${l.nombre}</div>`;
+lista.forEach((l,i)=>{
+
+cont.innerHTML += `
+<div class="admin-card">
+<img src="${l.img || ''}" class="admin-img">
+
+<div class="admin-body">
+<h3>${l.nombre}</h3>
+<p>${l.desc || ''}</p>
+
+<div class="admin-btns">
+<button onclick="aprobar('${l.id}')">✔</button>
+<button onclick="editar(${i})">✏️</button>
+<button onclick="eliminar('${l.id}')">🗑</button>
+</div>
+
+</div>
+</div>
+`;
 });
 }
 
@@ -250,7 +254,7 @@ window.onload = async ()=>{
 
 await cargarLocalesFirebase();
 
-if(window.location.pathname.includes("buscador.html")){
+if(document.getElementById("resultados-busqueda")){
 mostrarResultados(locales);
 }
 
