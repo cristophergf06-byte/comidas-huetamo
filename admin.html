@@ -23,6 +23,8 @@
 <button onclick="history.back()" class="btn-back">⬅ Regresar</button>
 
 <!-- 🔍 BUSCADOR -->
+<div class="admin-search-box">
+
 <input 
 type="text" 
 id="adminSearch" 
@@ -30,8 +32,11 @@ placeholder="🔍 Buscar negocio..."
 oninput="buscarAdmin()" 
 class="admin-search">
 
-<!-- 🔥 BOTÓN BUSCAR EXTRA -->
-<button onclick="buscarAdmin()">Buscar</button>
+<button onclick="buscarAdmin()" class="btn-search-admin">
+🔍 Buscar
+</button>
+
+</div>
 
 <!-- 📋 LISTA -->
 <div id="admin-lista" class="admin-grid"></div>
@@ -45,17 +50,26 @@ class="admin-search">
 <h3>✏️ Editar negocio</h3>
 
 <input type="text" id="editNombre" placeholder="Nombre">
+
 <textarea id="editDesc" placeholder="Descripción"></textarea>
 
 <input type="text" id="editTelefono" placeholder="Teléfono">
-<input type="text" id="editUbicacion" placeholder="Ubicación">
-<input type="text" id="editHorario" placeholder="Horario">
+
+<!-- 🔥 SOLO MAPA / YA NO UBICACIÓN MANUAL -->
+<input type="text" id="editHorario" placeholder="Horario (Ej: 8-22)">
 
 <input type="file" id="editImagen">
 
 <div class="modal-btns">
-<button class="btn-aprobar" onclick="guardarEdicion()">💾 Guardar</button>
-<button class="btn-eliminar" onclick="cerrarModal()">❌ Cancelar</button>
+
+<button class="btn-aprobar" onclick="guardarEdicion()">
+💾 Guardar
+</button>
+
+<button class="btn-eliminar" onclick="cerrarModal()">
+❌ Cancelar
+</button>
+
 </div>
 
 </div>
@@ -66,5 +80,6 @@ class="admin-search">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script src="script.js"></script>
+
 </body>
 </html>
