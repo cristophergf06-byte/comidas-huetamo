@@ -91,48 +91,97 @@ e.preventDefault();
 
 mostrarLoader("⏳ Registrando negocio...");
 
-let file = document.getElementById("regImagen").files[0];
+let horario=
+document.getElementById("regHorario")
+.value;
 
-let nuevo = {
-nombre: document.getElementById("regNegocio").value,
-desc: document.getElementById("regVenta").value,
-img: "",
-telefono: document.getElementById("regTelefono").value,
-ubicacion: lat && lng ? lat + "," + lng : "",
-horario: document.getElementById("regHorario").value,
-aprobado: false
+let partes=horario.split("-");
+
+if(partes.length!=2){
+
+alert("⚠ Usa formato: 08:00 - 22:00");
+
+ocultarLoader();
+
+return;
+
+}
+
+let inicio=partes[0].trim();
+
+let fin=partes[1].trim();
+
+if(inicio===fin){
+
+alert("⚠ Horario inválido");
+
+ocultarLoader();
+
+return;
+
+}
+
+let file=
+document.getElementById("regImagen")
+.files[0];
+
+let nuevo={
+
+nombre:regNegocio.value,
+
+desc:regVenta.value,
+
+img:"",
+
+telefono:regTelefono.value,
+
+ubicacion:
+lat&&lng
+? lat+","+lng
+: "",
+
+horario:horario,
+
+aprobado:false
+
 };
 
 if(file){
 
-let reader = new FileReader();
+let reader=new FileReader();
 
-reader.onload = async function(){
+reader.onload=async()=>{
 
-nuevo.img = reader.result;
+nuevo.img=reader.result;
 
-await db.collection("locales").add(nuevo);
+await db.collection("locales")
+.add(nuevo);
 
 ocultarLoader();
 
 alert("✅ Negocio registrado");
 
 location.href="buscador.html";
+
 };
 
 reader.readAsDataURL(file);
 
 }else{
 
-await db.collection("locales").add(nuevo);
+await db.collection("locales")
+.add(nuevo);
 
 ocultarLoader();
 
 alert("✅ Negocio registrado");
 
 location.href="buscador.html";
+
 }
+
 };
+
 }
 
 /* ================= BUSCAR ================= */
@@ -217,12 +266,32 @@ let partes = horario.split("-");
 
 if(partes.length !== 2) return false;
 
-let hora = new Date().getHours();
+let ahora = new Date();
 
-let inicio = parseInt(partes[0]);
-let fin = parseInt(partes[1]);
+let horaActual =
+ahora.getHours()*60 + ahora.getMinutes();
 
-return hora >= inicio && hora < fin;
+let inicioTxt = partes[0].trim();
+let finTxt = partes[1].trim();
+
+let [h1,m1]=inicioTxt.split(":").map(Number);
+let [h2,m2]=finTxt.split(":").map(Number);
+
+let inicio=(h1*60)+m1;
+let fin=(h2*60)+m2;
+
+
+// si cierra madrugada
+if(fin < inicio){
+
+return horaActual >= inicio ||
+horaActual <= fin;
+
+}
+
+return horaActual >= inicio &&
+horaActual <= fin;
+
 }
 
 /* ================= FILTRO ================= */
@@ -230,20 +299,33 @@ function verCategoria(cat){
 
 mostrarLoader("🍽 Filtrando...");
 
-let filtrados = locales.filter(l => {
+let filtrados = locales.filter(l=>{
 
-if(!l.aprobado || !l.horario) return false;
+if(!l.aprobado || !l.horario)
+return false;
 
-let [ini, fin] =
-l.horario.split("-").map(n=>parseInt(n));
+let partes=l.horario.split("-");
 
-if(cat === "mañana") return ini < 12;
+if(partes.length!==2)
+return false;
 
-if(cat === "tarde") return ini < 18 && fin > 12;
+let inicioTxt=partes[0].trim();
 
-if(cat === "noche") return fin >= 18;
+let hora=parseInt(
+inicioTxt.split(":")[0]
+);
 
-if(cat === "todos") return true;
+if(cat==="mañana")
+return hora>=5 && hora<12;
+
+if(cat==="tarde")
+return hora>=12 && hora<18;
+
+if(cat==="noche")
+return hora>=18 || hora<5;
+
+if(cat==="todos")
+return true;
 
 return false;
 
@@ -256,6 +338,7 @@ mostrarResultados(filtrados);
 ocultarLoader();
 
 },400);
+
 }
 
 /* ================= RESULTADOS ================= */
